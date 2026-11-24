@@ -13,7 +13,7 @@ Ambas máquinas estão configuradas na mesma rede privada, com o adaptador de re
 Para fins desta demonstração descobrimos o IP da máquina a ser invadida acessando ela nós mesmos com as credenciais padrão e utilizando o comando linux <code>ip a</code><br>
 <div align="center">Tela do servidor Metasploitable<br>
 <img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/dfe666da-b83b-48b0-8331-48699da34cbd" /></div><br>
-Numa situação mais parecida com a realidade, apenas a fim de exemplificação, IPs de máquinas podem ser descobertos publicamente com a ferramenta <a href="https://www.shodan.io/">Shodan</a>.
+COm isso descobrimos que o IP da máquina alvo na nossa rede interna é <code>192.168.56.101</code>Numa situação mais parecida com a realidade, apenas a fim de exemplificação, IPs de máquinas podem ser descobertos publicamente com a ferramenta <a href="https://www.shodan.io/">Shodan</a>.
 
 ## Força Bruta em Porta FTP 
 Nosso primeiro objetivo do desafio será tentar acesso ao servidor por meio de alguma porta aberta da máquina.<br>
@@ -22,5 +22,5 @@ Com a finalidade de identificar tais vulnerabilidade no alvo, utilizamos um coma
 <img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/873dba99-8a7c-4303-b1ba-1d7aa2dfb300" /></div><br>
 Podemos identificar que várias portas estão abertas mas nessa demonstração nossa escolha será o serviço **FTP**.<br>
 <br>
-Para continuar nossa demonstração agora precisamos de duas listas. Uma com possíveis nomes de usuários e outra com senhas. Em situações hipotéticas tais listas podem ser geradas ou adquiridas de diferentes formas. Por meio de vazamentos de dados seria uma destas maneiras. No nosso desafio criaremos listas simples com 4 ou 5 itens cada.
+Para continuar nossa demonstração agora precisamos de duas listas. Uma com possíveis nomes de usuários e outra com senhas. Em situações hipotéticas tais listas podem ser geradas ou adquiridas de diferentes formas. Por meio de vazamentos de dados seria uma destas maneiras. No nosso desafio criaremos listas simples com 4 ou 5 itens cada. As listas foram geradas em arquivos <code>.txt</code> e cada tentativa deve estar em uma respectiva linha, você poderá acessar essa listas em [pass.txt](
 
