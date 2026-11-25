@@ -55,7 +55,39 @@ Precisamos entender como os dados informados no formulário são enviados, para 
 <br>
 <div align="center">Inspecionando a página<br>
 <img width="1275" height="790" alt="image" src="https://github.com/user-attachments/assets/7e2f3f47-f7fc-4aef-adab-606b4176ac81" /></div><br>
-Podemos observar que são enviados três parametros na requisição POST, isso será importante para o comando medusa posteriormente.
+Podemos observar que são enviados três parametros na requisição POST, isso será importante para o comando Medusa posteriormente. Agora só nos resta definir quais listas de usuários e senhas vamos usar. Para fins dessa demonstração usarei as mesmas do passo anterior. Você poderá acessar a lista de <a href="/pass.txt">Senhas<a> e de <a href="/users.txt">Usuários<a> clicando nesses links ou na pasta raiz deste diretório.<br>
+Agora temos todas as informações que precisamos para executar o comando usando a ferramenta <strong>Medusa</strong>. Com isso podemos usar o seguinte comando no terminal do Kali Linux:<br>
+<br>
+<div align="center"><code>medusa -h 192.168.56.101 -U users.txt -P pass.txt -M http  -m PAGE'/dvwa/login.php'  -m FORM:'username=^USER^&password=^PASS^&Login=Login'  -m 'FAIL=Login failed' -t 6
+</code></div><br>
+Os argumentos desse comando são os seguintes:<br>
+<div align="center">-h # indica o IP alvo<br>
+	-U # arquivo de usuários<br>
+	-P # arquivo de senhas<br>
+	-m # argumentos extras da requisição, aqui foram especificados a página do domínio a ser acessada, os campos do formulário e a condição de falha<br>
+	-t # quantidade de threads simultâneas
+</div><br>
+Ao rodar o comando podemos observar o seguinte resultado:<br>
+<br>
+<div align="center">
+  Resultado do comando Medusa<br>
+  <img width="682" height="861" alt="image" src="https://github.com/user-attachments/assets/284dc32a-3c7a-42e9-a390-915fd464118d" />
+</div><br>
+Podemos observar que foram feitas interações e ele supostamente achou o conjunto de usuário e senha válidos como sendo "user" e "password" mas isso não é correto. Durante o curso a instrutora também teve esse falso positivo mas não consegui com que o Medusa me retornasse um teste válido para a aplicação web. Então pesquisando encontrei este <a href="https://github.com/stephenroque/dio-kali-medusa-bruteforce-lab/tree/main">Repositório no Github</a> que me ajudou indicando uma outra ferramenta para Brute Force, o <strong>Hydra</strong>. Segundo o dono do rapositório, o Medusa não é ideal para formulários http complexos então por isso ele recomenda o uso do Hydra.<br>
+<br>
+<div align="center">O comando do Hydra ficou assim:<br>
+<code>hydra -L users.txt -P pass.txt 192.168.56.101 http-post-form \ "/dvwa/login.php:username=^USER^&password=^PASS^&Login=Login:Login failed"</code></div><br>
+Com isso tivemos o seguinte resultado:<br>
+<div align="center">
+ Resultado do comando Hydra<br>
+ <img width="685" height="318" alt="image" src="https://github.com/user-attachments/assets/8d3d58d5-3c65-4271-8e5b-36a85d575ff8" />
+</div><br>
+Agora foi possível observar que as credenciais indicadas pela ferramenta realmente são as credenciais corretas. Usuário "admin" e senha "password". Com isso conseguimos realizar um ataque de força bruta me página WEB.
+
+## Password spraying em SMB com com enumeração de usuários
+
+
+
 
 
 
