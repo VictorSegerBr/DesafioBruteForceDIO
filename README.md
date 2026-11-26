@@ -1,5 +1,5 @@
 # Desafio Brute Force DIO
-Este repositório é referente ao desafio proposto de técnicas de Brute force utilizando a ferramenta **Medusa** no Kali Linux
+Este repositório é referente ao desafio do curso da DIO, proposto sobre técnicas de Brute force utilizando a ferramenta **Medusa** no Kali Linux
 
 ## Configurações Iniciais
 O primeiro passo foi criar duas máquinas virtuais, uma com o sistema operacional **Metasploitable2** e outra com **Kali Linux**.<br>
@@ -20,7 +20,7 @@ Nosso primeiro objetivo do desafio será tentar acesso ao servidor por meio de a
 Com a finalidade de identificar tais vulnerabilidade no alvo, utilizamos um comando de outra ferramenta do Kali Linux, o **Nmap**. Tal ferramenta consegue identificar na máquina alvo se as portas de conexão externa estão abertas ou fechadas, a versão dos serviços utilizados e outras funções. Para isso utilizaremos o comando <code>nmap -sV -p 21,22,80,445,139 192.168.56.101</code>. Esse comando retorna detalhes sobre as portas relativas aos serviços de ftp, ssh, http e samba.<br>
 <div align="center">Comando e resposta do Nmap<br>
 <img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/873dba99-8a7c-4303-b1ba-1d7aa2dfb300" /></div><br>
-Podemos identificar que várias portas estão abertas mas nessa demonstração nossa escolha será o serviço **FTP**.<br>
+Podemos identificar que várias portas estão abertas mas nessa demonstração nossa escolha será o serviço FTP.<br>
 <br>
 Para continuar nossa demonstração agora precisamos de duas listas. Uma com possíveis nomes de usuários e outra com senhas. Em situações hipotéticas tais listas podem ser geradas ou adquiridas de diferentes formas. Por meio de vazamentos de dados seria uma destas maneiras. No nosso desafio criaremos listas simples com 4 ou 5 itens cada. As listas foram geradas em arquivos <code>.txt</code> e cada tentativa deve estar em uma respectiva linha. Você poderá acessar a lista de <a href="/pass.txt">Senhas<a> e de <a href="/users.txt">Usuários<a> clicando nesses links ou na pasta raiz deste diretório.<br>
 <br>
@@ -48,7 +48,7 @@ Destacado na imagem podemos ver que o software identificou que um conjunto de cr
 E com isso completamos o procedimento de Força Bruta de senhas utilizando o software Medusa e explorando vulnerabilidade em porta FTP.
 
 ## Força Bruta em formulário WEB
-Agora que executamos um ataque do tipo força bruta em um servidor, vamos ver como ele pode ser aplicado em formulários de páginas da web. Para isso vamos precisar de uma página de teste. Por sorte o Metasploitable2 possui uma funcionalidade para nos ajudar. Para isso é necessário rodar as mesmas maquinas virtuais configuradas no <a href="#força-bruta-em-porta-ftp">passo anterior</a>. Utilizando o navegador Mozilla do Kali Linux vamos acessar o seguinte endereço: <code>http://192.168.56.101/dvwa/login.php</code>. Neste endereço é possível observar a página <strong>Damn Vulnerable Web Application (DVWA)</strong>. Essa página foi propositalmente desenvolvida para apresentar vulnerabilidades que podem ser exploradas para aprendizado na área de cibersegurança.<br>
+Agora que executamos um ataque do tipo força bruta em um servidor, vamos ver como ele pode ser aplicado em formulários de páginas da web. Para isso vamos precisar de uma página de teste. Por sorte o Metasploitable2 possui uma funcionalidade para nos ajudar. Para isso é necessário rodar as mesmas maquinas virtuais configuradas em <a href="#configuracoes-iniciais">configurações iniciais</a>. Utilizando o navegador Mozilla do Kali Linux vamos acessar o seguinte endereço: <code>http://192.168.56.101/dvwa/login.php</code>. Neste endereço é possível observar a página <strong>Damn Vulnerable Web Application (DVWA)</strong>. Essa página foi propositalmente desenvolvida para apresentar vulnerabilidades que podem ser exploradas para aprendizado na área de cibersegurança.<br>
 <div align="center">Página Inicial do DVWA<br>
 <img width="1275" height="793" alt="image" src="https://github.com/user-attachments/assets/d09e5358-d589-4399-b499-791819703608" /></div><br>
 Precisamos entender como os dados informados no formulário são enviados, para isso usamos o Devtools. Colocamos quaisquer dados nos campos Username e Password e enviamos, apenas para termos certeza de como os dados são comunicados na requisição.<br>
@@ -82,12 +82,29 @@ Com isso tivemos o seguinte resultado:<br>
  Resultado do comando Hydra<br>
  <img width="685" height="318" alt="image" src="https://github.com/user-attachments/assets/8d3d58d5-3c65-4271-8e5b-36a85d575ff8" />
 </div><br>
-Agora foi possível observar que as credenciais indicadas pela ferramenta realmente são as credenciais corretas. Usuário "admin" e senha "password". Com isso conseguimos realizar um ataque de força bruta me página WEB.
+Agora foi possível observar que as credenciais indicadas pela ferramenta realmente são as credenciais corretas. Usuário "admin" e senha "password". Com isso conseguimos realizar um ataque de força bruta em página WEB.
 
 ## Password spraying em SMB com com enumeração de usuários
 
+Nessa etapa nós iremos explorar as vulnerabilidades do serviço SMB de compartilhamento de arquivos do Windows. E faremos isso usando também a técnica de password spraying que consiste em testar poucas senhas mas em vários usuários, buscando evitar que medidas de seguranças sejam tomadas pelo alvo. Em nossa prática vamos usar as mesmas máquinas virtuais utilizadas em <a href="#configuracoes-iniciais">configurações iniciais</a>. Primeiramente vamos usar a ferramenta <strong>Enun4Linux</strong> para realizar um procedimento de enumeração e buscar os nomes de usuários. O comando utilizado é: <code>enum4linux -a 192.168.56.101 | tee enum4_output.txt</code>. Com isso ele nos traz uma lista de todos usuários da máquina alvo:<br>
+<div align="center">
+	Parte do resultado do comando enum4linux
+<img width="267" height="580" alt="image" src="https://github.com/user-attachments/assets/22d74310-519e-4983-bb85-d5b688f13979" />
+</div><br>
+Com este resultado podemos montar nossa própria lista de <a href="/smb_users.txt">Usuários<a>. Para a lista de senhas precisamos lembrar que vamos realizar o método password spraying, isso significa que vamos ser práticos e escolher poucas senhas. Geralmente são escolhidas as senhas mais comuns com base em vazamentos. A lista usada no exercício está <a href="/senhas_spray.txt">aqui<a>. Com isso temos tudo que precisamos para usar o Medusa e rodar o seguinte comando: <code>medusa -h 192.168.56.101 -U smb_users.txt -P senhas_spray.txt -M smbnt -t 2 -T 50</code>. Com isso temos o seguinte resultado:<br>
+<div align="center">
+	Resultado do Medusa
+<img width="677" height="524" alt="image" src="https://github.com/user-attachments/assets/3a7b2d10-fbab-4657-a193-5c1cc8c7aae9" />
+</div><br>
+Podemos observar que o conjunto de credenciais com usuário "msfadmin" e senha "msfadmin" teve acesso concedido. Podemos validar isso rodando o comando <code>smbclient -L //192.168.56.101 -U msfadmin</code> e informando a senha.<br>
+<div align="center">
+	Comprovação de validade de credenciais do SMB
+	<img width="673" height="357" alt="image" src="https://github.com/user-attachments/assets/91924e90-379a-4d6c-9990-86760277f28a" />
+</div><br>
+Com isso concluímos com sucesso o ataque Brute Force ao serviço SMB.
 
+## Como se previnir
 
-
-
-
+Para definir o que fazer para se prevenir contra ataques de força bruta em serviços FTP, Web e SMB, o primeiro passo é dificultar o acesso indevido. Combinar a autenticação multifator com o uso de senhas fortes e expiradas regularmente cria uma barreira básica e eficiente. Além disso, configurar o bloqueio de IP após múltiplas tentativas de login interrompe ataques automatizados antes que eles tenham sucesso.<br>
+<br>
+No nível de infraestrutura, a segurança depende de controle e visibilidade constantes. A segmentação da rede limita os danos caso alguma credencial seja comprometida, enquanto o monitoramento inteligente de LOGs e comportamento permite identificar ações suspeitas rapidamente. Por fim, realizar auditorias regulares garante que todas essas defesas continuem funcionando bem e atualizadas contra novas ameaças.
